@@ -2,10 +2,12 @@ from pandas import DataFrame
 import pandas as pd
 import pymc as pm
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 raw = pd.read_csv('data/cleaned_sp500.txt', sep=',', encoding='utf-8')
 
-data = raw[raw['ticker'] == 'A'].reset_index()
+data = raw[raw['ticker'] == 'GOOG'].reset_index()
 
 mu = np.mean(data['daily_log'])
 sigma = np.std(data['daily_log'])
@@ -36,14 +38,20 @@ tau_sample = mcmc.trace('tau')[:]
 print mu1_sample
 print mu2_sample
 print tau_sample
+
+#tau_his = np.histogram(tau_sample, bins=range(len(data['daily_log'])+1))
+
+#print tau_his
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.hist(mu1_sample, 50)
+ax.hist(mu2_sample, 50)
+plt.savefig('data/explore/GOOG-mu.png')
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.hist(tau_sample, len(data['daily_log']))
+plt.savefig('data/explore/GOOG-tau.png')
+
 quit()
 
-
-print mu1.random()
-print mu2.random()
-print tau.random()
-
-
-print mu
-print sigma
-print np.max(data['daily_log'])
